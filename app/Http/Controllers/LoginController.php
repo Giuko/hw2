@@ -77,9 +77,17 @@ class LoginController extends BaseController
         return;
     }
 
-
     public function logout(){
         // Elimina dati di sessione
         Session::flush();
+    }
+
+    public function isLogged(){
+        // Verifica se loggato
+        if(Session::get('user_id')){
+            echo 1;
+        }else{
+            echo 0;
+        }
     }
 }

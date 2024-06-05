@@ -36,9 +36,11 @@ Route::get('/getUsers', function(){
 Route::post('/login', 'App\Http\Controllers\LoginController@login');
 Route::post('/signup', 'App\Http\Controllers\LoginController@signup');
 Route::get('/logout', 'App\Http\Controllers\LoginController@logout');
+Route::get('/isLogged', 'App\Http\Controllers\LoginController@isLogged');
 /* === FINE LOGIN CONTROLLER === */
 
 /* === REDDIT CONTROLLER === */
 Route::get('/headLoad', 'App\Http\Controllers\RedditHttpController@headLoad');
-Route::get('/noOauth/{request}/{limit?}', 'App\Http\Controllers\RedditHttpController@noOauth');
+Route::get('/subredditRequest/{subreddit}', 'App\Http\Controllers\RedditHttpController@subredditRequest');
+Route::get('/getPost/{request}/{limit?}', 'App\Http\Controllers\RedditHttpController@getPost');
 /* === FINE REDDIT CONTROLLER === */

@@ -71,6 +71,13 @@ function leaveStar(e){
 }
 
 function clickStar(e){
+
+    e.preventDefault();
+
+    if(!isLogged()){
+        loginClick();
+        return;
+    }
     let star = e.target;
     let clicked = star.dataset.click;
 
@@ -140,8 +147,6 @@ function clickStar(e){
             body: JSON.stringify(post)
         });
     }
-
-    e.preventDefault();
 
 }
 /* #endregion */

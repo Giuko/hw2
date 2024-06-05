@@ -282,6 +282,12 @@ login.addEventListener('click', loginClick);
 logout.addEventListener('click', logoutClick);
 
 
-function isLogged(){
-    fetch('/isLogged')
+async function isLogged(){
+    let returnValue;
+    await fetch('/isLogged').then((response) => {
+        return response.json();
+    }).then((json) => {
+        returnValue = json;
+    });
+    return returnValue;
 }

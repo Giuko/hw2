@@ -47,7 +47,21 @@ class RedditHttpController extends BaseController
         }
     }
 
-    public function noOauth($request, $limit = null){
-        return $request;
+    public function subredditRequest($subreddit){
+        $endpoint = 'https://www.reddit.com';
+        $request = "/r/".$subreddit;
+        $end = "/about.json";
+        
+        $response = Http::get($endpoint.$request.$end);
+        echo $response;
+    }
+
+    public function getPost($search, $limit=25){
+        $endpoint = 'https://www.reddit.com/';
+        $request = 'q='.$search."&limit=".$limit;
+        $end = ".json?";
+        
+        $response = Http::get($endpoint.$end.$request);
+        echo $response  ;
     }
 }
