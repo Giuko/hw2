@@ -17,8 +17,8 @@ async function loadPosts(value){
     const posts = [];
     const query = `/search.json?q=${value}&limit=10`
     console.log(query);
-    const url = 'script_php/fetchNoOauth.php?request=' + query;
-    
+    // const url = 'script_php/fetchNoOauth.php?request=' + query;
+    const url = `/getPost/${value}`;
     json = await fetch(url).then(onResponse, onFailure);
     console.log('loadPost: '+ JSON.stringify(json));
     const data = json.data;
@@ -35,10 +35,11 @@ async function loadPosts(value){
         let thumb = info.thumbnail;
         thumb = getImg(thumb);
         
-        const subreddit = info.subreddit_name_prefixed;
+        const subreddit = info.subreddit;
     
         const subreddit_request = `/${subreddit}/about.json`;
-        const subreddit_url = 'script_php/fetchNoOauth.php?request='+subreddit_request; 
+        // const subreddit_url = 'script_php/fetchNoOauth.php?request='+subreddit_request; 
+        const subreddit_url = `/subredditRequest/${subreddit}`;
         let ico = '';
         const jsonSubreddit = await fetch(subreddit_url).then(onResponse, onFailure)
         
@@ -57,10 +58,10 @@ async function loadPosts(value){
         formData.append('descr', content); 
         formData.append('img', thumb); 
 
-        await fetch("script_php/inDBPost.php",{
-            method: 'POST',
-            body: formData
-        });
+        // await fetch("script_php/inDBPost.php",{
+        //     method: 'POST',
+        //     body: formData
+        // });
 
         posts.push(post);
 

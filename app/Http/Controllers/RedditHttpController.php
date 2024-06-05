@@ -57,11 +57,10 @@ class RedditHttpController extends BaseController
     }
 
     public function getPost($search, $limit=25){
-        $endpoint = 'https://www.reddit.com/';
+        $endpoint = 'https://www.reddit.com/search.json?';
         $request = 'q='.$search."&limit=".$limit;
-        $end = ".json?";
         
-        $response = Http::get($endpoint.$end.$request);
-        echo $response  ;
+        $response = Http::get($endpoint.$request);
+        echo $response;
     }
 }
