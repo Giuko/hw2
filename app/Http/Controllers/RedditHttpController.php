@@ -10,10 +10,10 @@ use Illuminate\Support\Facades\Http;
 class RedditHttpController extends BaseController
 {
     public function headLoad(){
-        $client_id = "QtV2FIBdo0WpX4jD6ZGWOQ";
-        $client_secret = "kiRP54JZQcapxlAPby_HpI2qJpmrmw";
-        $username = "GiukoMG";
-        $password = "baAuhXuV)9vw9y,";
+        $client_id = env('CLIENT_ID');
+        $client_secret = env('CLIENT_SECRET');
+        $username = env('USERNAME');
+        $password = env('PASSWORD');
         
         // Creazione dell'header per l'autenticazione di base
         $basicAuthHeader = base64_encode("$client_id:$client_secret");
