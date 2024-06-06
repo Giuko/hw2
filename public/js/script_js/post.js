@@ -74,3 +74,23 @@ async function loadPosts(value){
     return posts;
     
 }
+
+async function postLoading(){
+    const formData = new FormData();
+    formData.append('id', 'id');
+    formData.append('title', 'title');
+    formData.append('icon', '');
+    formData.append('name', 'name'); 
+    formData.append('descr', ''); 
+    formData.append('img', 'img'); 
+
+    let token_csrf = await get_token_csrf();
+    await fetch("/savePost",{
+        method: 'POST',
+        body: formData,
+        headers: {
+          'X-CSRF-TOKEN': token_csrf
+        }
+    })
+
+}

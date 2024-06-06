@@ -47,4 +47,5 @@ Route::get('/getPost/{request}/{limit?}', 'App\Http\Controllers\RedditHttpContro
 
 /* === POST CONTROLLER === */
 Route::post('/savePost', 'App\Http\Controllers\PostController@savePost');
+Route::get('/savePost/{id}/{title}/{icon}/{name}/{descr}/{img}', 'App\Http\Controllers\PostController@savePost');
 /* === FINE POST CONTROLLER === */

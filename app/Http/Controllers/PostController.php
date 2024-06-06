@@ -16,6 +16,7 @@ class PostController extends BaseController
         }
 
         $post = new Post;
+        
         $post->postid = request('id');
         $post->title = request('title');
         $post->icon = request('icon');
