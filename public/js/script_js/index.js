@@ -507,10 +507,23 @@ async function getPost(request){
     return jsonReturn;
 }
 
-HeadLoading();
-loadSubreddit();
-loadPosts('new').then((value) => {
-    post_array = value;
-    console.log('Post loaded');
-    loadContent();
-});
+setTimeout(HeadLoading, 0);
+
+setTimeout(loadSubreddit, 0);
+
+function loadFirstPost(){
+    loadPosts('new').then((value) => {
+        post_array = value;
+        console.log('Post loaded');
+        loadContent();
+    });
+}
+
+setTimeout(loadFirstPost, 0)
+// HeadLoading();
+// loadSubreddit();
+// loadPosts('new').then((value) => {
+//     post_array = value;
+//     console.log('Post loaded');
+//     loadContent();
+// });

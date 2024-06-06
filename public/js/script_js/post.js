@@ -58,10 +58,15 @@ async function loadPosts(value){
         formData.append('descr', content); 
         formData.append('img', thumb); 
 
-        // await fetch("script_php/inDBPost.php",{
-        //     method: 'POST',
-        //     body: formData
-        // });
+        let token_csrf = await get_token_csrf();
+        await fetch("/savePost",{
+            method: 'POST',
+            body: formData,
+            headers: {
+              'X-CSRF-TOKEN': token_csrf
+            }
+        })
+        
 
         posts.push(post);
 

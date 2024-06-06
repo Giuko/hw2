@@ -44,3 +44,7 @@ Route::get('/headLoad', 'App\Http\Controllers\RedditHttpController@headLoad');
 Route::get('/subredditRequest/{subreddit}', 'App\Http\Controllers\RedditHttpController@subredditRequest');
 Route::get('/getPost/{request}/{limit?}', 'App\Http\Controllers\RedditHttpController@getPost');
 /* === FINE REDDIT CONTROLLER === */
+
+/* === POST CONTROLLER === */
+Route::post('/savePost', 'App\Http\Controllers\PostController@savePost');
+/* === FINE POST CONTROLLER === */
