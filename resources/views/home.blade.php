@@ -158,7 +158,7 @@
         <div class="container flex flex-center">
             <div class="subcontainer">
                 <section class="flex flex-start" id="head">
-                    <article class="item" id="item1" data-index=1>
+                    <a class="item" id="item1" data-index=1>
                         <div class="overlay flex flex-end">
                             <button class="flex flex-center hidden" id="previous-head" data-buttontype="previous-head"><</button>
                             <div class="title"></div>
@@ -170,8 +170,8 @@
                                 </div>
                             </div>
                         </div>
-                    </article>
-                    <article class="item" id="item2" data-index=2>
+                    </a>
+                    <a class="item" id="item2" data-index=2>
                         <div class="overlay flex flex-end">
                             <div class="title"></div>
                             <div class="description"></div>
@@ -182,8 +182,8 @@
                                 </div>
                             </div>
                         </div>
-                    </article>
-                    <article class="item" id="item3" data-index=3>
+                    </a>
+                    <a class="item" id="item3" data-index=3>
                         <div class="overlay flex flex-end">
                             <div class="title"></div>
                             <div class="description"></div>
@@ -194,8 +194,8 @@
                                 </div>
                             </div>
                         </div>
-                    </article>
-                    <article class="item" id="item4" data-index=4>
+                    </a>
+                    <a class="item" id="item4" data-index=4>
                         <div class="overlay flex flex-end">
                             <button class="flex flex-center" id="next-head" data-buttontype="next-head">></button>
                             <div class="title"></div>
@@ -207,7 +207,7 @@
                                 </div>
                             </div>
                         </div>
-                    </article>
+                    </a>
                 </section>
                 <div class="flex" id="main">
                     <section id="main-content">
@@ -217,16 +217,6 @@
                             <div class="button flex flex-center">M</div>
                         </div>
                         <div class="flex" id="feed">
-                            <article class="item" data-index="1">
-                            </article>
-                            <article class="item" data-index="2">
-                            </article>
-                            <article class="item" data-index="3">
-                            </article>
-                            <article class="item" data-index="4">
-                            </article>
-                            <article class="item" data-index="5">
-                            </article>
                         </div>
                     </section>
                     <div class="flex" id="sidebar" data-position="0">

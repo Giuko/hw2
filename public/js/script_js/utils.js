@@ -17,10 +17,6 @@ function checkScroll() {
                 sidebar.classList.add('sticky');
             }
         }
-        // Se l'utente ha raggiunto il fondo della pagina
-        if (scrollTop + windowHeight >= bodyHeight) {
-            loadMoreContent();
-        }
     }    
 }
 window.addEventListener("scroll", checkScroll);
@@ -70,7 +66,7 @@ function leaveStar(e){
     }
 }
 
-function clickStar(e){
+async function clickStar(e){
 
     e.preventDefault();
 
@@ -125,11 +121,8 @@ function clickStar(e){
             formData.append('name', post['name']);
             formData.append('descr', post['descr']);
             formData.append('img', post['img']);
-
-            fetch('script_php/savepost.php',{
-                method: 'POST',
-                body: formData
-            });
+            
+            fetch('/savePostUser/'+post['id']);
         }
     }else{
         star.innerHTML = '';
@@ -139,13 +132,7 @@ function clickStar(e){
         if(index !== - 1){
             saved.splice(index, 1);
         }
-        fetch('script_php/removepost.php',{
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(post)
-        });
+        fetch('removePostUser/' + post['id']);
     }
 
 }

@@ -90,4 +90,22 @@ class LoginController extends BaseController
             echo 0;
         }
     }
+
+    public function getUsername($id){
+        // Verifica se loggato
+        $user = User::where('id', $id)->first();
+        return response()->json($user->username);
+    }
+    
+    public function getUsernameSession(){
+        // Verifica se loggato
+        if(Session::get('user_id')){
+            
+            $user = User::where('id', Session::get('user_id'))->first();
+            
+            return response()->json($user->username);
+        }else{
+            return 0;
+        }
+    }
 }

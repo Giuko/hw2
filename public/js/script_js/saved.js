@@ -1,7 +1,7 @@
 const feed = document.querySelector('#feed');
 let feedContent = Array.from(document.querySelectorAll('#feed .article'));
 
-fetch("script_php/loadSaved.php").then((response) => {
+fetch("/loadSaved").then((response) => {
     return response.json();
 }).then((json) => {
     saved = json;
@@ -15,12 +15,12 @@ function loadSaved(index){
     let article = feedContent[index];
     let post = saved[index];
     
-    let postId = post['id'];
-    let subredditName = post['name'];
-    let subredditIcon = post['icon'];
-    let titleText = post['title'];
-    let descrText = post['descr']
-    let imagePost = post['img'];
+    let postId = post['postid'];
+    let subredditName = post['name'] ?? '';
+    let subredditIcon = post['icon'] ?? '';
+    let titleText = post['title'] ?? '';
+    let descrText = post['descr'] ?? '';
+    let imagePost = post['img'] ?? '';
 
     let externDiv = document.createElement('div');
     externDiv.classList.add('insert');
@@ -92,7 +92,7 @@ function loadSaved(index){
     externDiv.appendChild(subred);
     externDiv.appendChild(title);
     externDiv.appendChild(text);
-    if(imagePost === 'undefined'){
+    if(!imagePost){
         imagePost = '';
     }
     imgArticle.src = imagePost;
@@ -100,7 +100,7 @@ function loadSaved(index){
     
     externDiv.appendChild(divImg); 
     const link = document.createElement('a');
-    link.href = 'comment.php?postId=' + postId;
+    link.href = '/comment/' + postId;
     link.appendChild(externDiv);
     article.dataset.id = postId;
     article.appendChild(link); 

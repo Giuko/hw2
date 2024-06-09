@@ -10,7 +10,7 @@ async function get_token_csrf(){
     return token_text;
 }
 
-fetch('getUsers').then((response) => {return response.json()}).then((json) =>{
+fetch('/getUsers').then((response) => {return response.json()}).then((json) =>{
     for(let i = 0; i < json.length; i++){
         usernameList.push(json[i].username);
         emailList.push(json[i].email);
@@ -191,17 +191,13 @@ async function validazioneSignup(e){
             }).then((response) => {
                 console.log(response.text())
             })
-            // .then((ret) => {
-            //     text = ret;
-            //     console.log(text);
-            // });
             
             switchButton(0);
             document.querySelector('#modal-view').classList.add('hidden');
             document.querySelector('#modal-view').classList.remove('flex');
             if(login.dataset.action === 'saved-login'){
                 document.querySelector('.errore').classList.add('hidden');
-                fetch("script_php/loadSaved.php").then((response) => {
+                fetch("/loadSaved").then((response) => {
                     return response.json();
                 }).then((json) => {
                     saved = json;
@@ -261,7 +257,7 @@ function closeLoginSignupFunction(){
 async function logoutClick(){
     console.log("Logout");
     switchButton(1);
-    await fetch('logout');
+    await fetch('/logout');
     if(logout.dataset.action === 'saved-logout'){
         const url = "/";
         window.open(url, "_self");
@@ -285,6 +281,7 @@ logout.addEventListener('click', logoutClick);
 async function isLogged(){
     let returnValue;
     await fetch('/isLogged').then((response) => {
+        //
         return response.json();
     }).then((json) => {
         returnValue = json;

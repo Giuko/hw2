@@ -1,5 +1,5 @@
 const feed = document.querySelector('#feed');
-const feedContent = Array.from(document.querySelectorAll('#feed article'));
+let feedContent;
 let headContent = Array.from(document.querySelectorAll('#head .item'));
 const sidebarList = document.querySelector('#popular-communities-list');
 const sidebar = document.querySelector('#sidebar');
@@ -10,12 +10,13 @@ let post_array = [];
 
 
 class Head{
-    constructor(article, title, description, name, icon){
+    constructor(article, title, description, name, icon, id){
         this.article = article;
         this.title = title;
         this.description = description;
         this.name = name;
         this.icon = icon;
+        this.id = id;
     }
 }
 
@@ -62,24 +63,6 @@ function onClick(){
         }
     }
 
-}
-
-
-
-function loadMoreContent(){
-    let feed = document.querySelector('#feed');
-    let docToLoad = 1;
-    for (let i = 0; i < docToLoad; i++) {
-        let item = document.createElement('article');
-        let item_content = document.createElement('div');
-        item.classList.add('item');
-        item.dataset.index = feedContent.length + 1;
-        item_content.classList.add('insert');
-        item.appendChild(item_content);
-        feedContent.push(item);
-        feed.appendChild(item);
-        loadContent();
-    }
 }
 
 //Funzione che gestisce il blocco laterale con i subreddit
@@ -141,7 +124,7 @@ function onCLickMore(event){
         item.appendChild(container);
         sidebarList.appendChild(item);
         let link = document.createElement('a');
-        link.href = 'about.php?subreddit='+name.textContent;
+        link.href = '/about/'+(name.textContent).replace('r/', '');
         link.appendChild(item);
         sidebarList.appendChild(link);
     }
@@ -163,7 +146,15 @@ function onEnterSearch(e){
     if(e.key === "Enter"){
         let value = encodeURIComponent(searchbar.value);
         loadPosts(value).then((value) => {
-            post_array = value;
+            feed.innerHTML='';
+            for(let i= 0; i< value.num; i++){
+                const article = document.createElement('article');
+                article.classList.add('item');
+                article.dataset.index = i+1;
+                feed.appendChild(article);
+            }
+            feedContent = Array.from(document.querySelectorAll('#feed article'))
+            post_array = value.posts;
             console.log('Post loaded');
             loadContent();
         });
@@ -172,10 +163,6 @@ function onEnterSearch(e){
 
 const searchbar = document.querySelector('#searchbar');
 searchbar.addEventListener("keyup", onEnterSearch)
-
-
-
-
 
 function recentClick(e){
     let r = e.currentTarget;
@@ -213,6 +200,7 @@ function firstHeadLoad(){
         item.querySelector('.description').textContent = head_array[index].description;
         item.querySelector('.name').textContent = head_array[index].name;
         item.querySelector('img').src = head_array[index].icon;
+        item.href = '/comment/'+head_array[index].id;
     }   
 }
 
@@ -251,7 +239,7 @@ function firstSidebarLoad(){
         container.appendChild(content);
         item.appendChild(container);
         let link = document.createElement('a');
-        link.href = 'about.php?subreddit='+name.textContent;
+        link.href = '/about/'+(name.textContent).replace('r/', '');
         link.appendChild(item);
         sidebarList.appendChild(link);
     }
@@ -284,7 +272,7 @@ function recentLoad(){
         externDiv.appendChild(divText);
 
         let link = document.createElement('a');
-        link.href = 'about.php?subreddit='+divText.textContent;
+        link.href = '/about/'+(divText.textContent).replace('r/', '');
         link.appendChild(externDiv);
         sidebarList.appendChild(link);
 
@@ -327,12 +315,34 @@ async function onHeadJson(json){
         const title = text.substring(0, 15);
         const subreddit = array[i].data.subreddit_name_prefixed;
         const thumbnail = array[i].data.thumbnail;
+        const id = array[i].data.id;
         if(text.length >= 33){
             text = text.substring(0, 30) + "...";
-        }
-        await getIcon(array[i].data.subreddit).then(iconUrl =>{
-            head = new Head(`url(${thumbnail})`,title, text, subreddit, iconUrl);
+        };
+        let formData;
+        await getIcon(array[i].data.subreddit).then((iconUrl) =>{
+            head = new Head(`url(${thumbnail})`,title, text, subreddit, iconUrl, id);
             head_array.push(head);
+
+
+            const formN = new FormData();
+            formN.append('id', id);
+            formN.append('title', array[i].data.title);
+            formN.append('icon', iconUrl);
+            formN.append('name', subreddit); 
+            formN.append('descr', array[i].data.selftext); 
+            formN.append('img', thumbnail); 
+            formData = formN;
+        });
+
+        let token_csrf = await get_token_csrf();
+        
+        fetch("/savePost",{
+            method: 'POST',
+            body: formData,
+            headers: {
+            'X-CSRF-TOKEN': token_csrf
+            }
         })
     }
     
@@ -359,12 +369,15 @@ function onSubredditInfoJson(json){
     subreddit_array.push(subreddit);
     
 }
-
+let retval;
 async function onBestJson(json){
     let visited = [];
     
     for(let i = 0; i < json.data.dist; i++){
         let name = json.data.children[i].data.subreddit;
+        if(json.data.children[i].data.over_18){
+            continue;
+        }
         if(!visited.includes(name)){
             visited.push(name);
         }
@@ -378,9 +391,6 @@ async function onBestJson(json){
 }
 
 async function loadSubreddit(){
-    // const request = `/best.json`;
-    // const url = 'script_php/fetchNoOauth.php?request='+request; 
-    // const json = await fetch(url).then(onResponse, onFailure);
     let json;
     await getPost('best').then((response) => {
         json = response;
@@ -390,11 +400,10 @@ async function loadSubreddit(){
 /* #endregion */
 
 /* #region ==== FEED ==== */
-function loadContent(){
-    for(let i = 0; i < feedContent.length; i++){
+async function loadContent(){
+    for(let i = 0; i < feedContent.length - 1; i++){
         const article = feedContent[i];
-        const index = (article.dataset.index - 1) % post_array.length;
-
+        const index = article.dataset.index;
         const id_post = post_array[index].id;
         const title_post = post_array[index].title;
         const content_post = post_array[index].content;
@@ -422,9 +431,20 @@ function loadContent(){
 
         let subDiv2 = document.createElement('div');
         subDiv2.classList.add('star');
-        subDiv2.textContent = '☆';
-        subDiv2.dataset.click = "0";
-
+        let isSaved;
+        
+        await fetch('/isSaved/'+id_post).then((response) => {
+            return response.json();
+        }).then((json) => {
+            isSaved = json;
+        })
+        if(!isSaved){
+            subDiv2.textContent = '☆';
+            subDiv2.dataset.click = "0";
+        }else{
+            subDiv2.textContent = '★';
+            subDiv2.dataset.click = "1";
+        }
         subDiv2.addEventListener('mouseenter', enterStar);
         subDiv2.addEventListener('mouseleave', leaveStar);
         subDiv2.addEventListener('click', clickStar);
@@ -488,7 +508,7 @@ function loadContent(){
         }
 
         const link = document.createElement('a');
-        link.href = 'comment.php?postId=' + article.dataset.id;
+        link.href = '/comment/' + article.dataset.id;
         link.appendChild(externDiv);
         article.appendChild(link);
         
@@ -513,7 +533,16 @@ setTimeout(loadSubreddit, 0);
 
 function loadFirstPost(){
     loadPosts('new').then((value) => {
-        post_array = value;
+        feed.innerHTML='';
+        for(let i= 0; i< value.num; i++){
+            const article = document.createElement('article');
+            article.classList.add('item');
+            article.dataset.index = i+1;
+            feed.appendChild(article);
+        }
+        feedContent = Array.from(document.querySelectorAll('#feed article'));
+        post_array = value.posts;
+
         console.log('Post loaded');
         loadContent();
     });

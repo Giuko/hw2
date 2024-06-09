@@ -1,13 +1,12 @@
 const postId = document.querySelector('#postId').dataset.info;
-let retValue;
+
 function deleteComment(e){
     const id = e.target.parentElement.parentElement.parentElement.dataset.id;
     e.target.parentElement.parentElement.parentElement.remove();
-    fetch("script_php/deleteComment.php?id="+id);
+    fetch("/deleteComment/"+id);
 }
 
-async function postComment(main, element){
-    
+async function postComment(main, element){    
     const commentDiv = document.createElement('section');
     const topDiv = document.createElement('div');
     const userDiv = document.createElement('div');
@@ -25,9 +24,21 @@ async function postComment(main, element){
     topDiv.classList.add("align-center");
     topDiv.classList.add("top");
     commentDiv.classList.add("comment");
+    if(typeof element['account_id'] !== 'undefined'){
+        await fetch('/getUsername/'+element['account_id']).then((response) => {
+            return response.json();
+        }).then((json) =>{
+            userDiv.textContent = json;
+        })
+    }else{
+        userDiv.textContent = element['username'];
+    }
 
-    userDiv.textContent = element['username'];
-    dateString = element['post_date'];
+    if(typeof element['created_at'] !== 'undefined'){
+        dateString = element['created_at'];
+    }else{
+        dateString = element['post_date'];
+    }
     // Creare un oggetto Date
     const date = new Date(dateString);
 
@@ -46,56 +57,50 @@ async function postComment(main, element){
     contentDiv.textContent = element['content'];
     containerDiv.appendChild(contentDiv);
     commentDiv.appendChild(containerDiv);
+    commentDiv.dataset.id=element['id'];
 
     // Solo se utente che ha postato e utente loggato sono uguali
-    //element['username']
-
-    const formData = new FormData();
-    formData.append('username', element['username']);
-    await fetch('script_php/checkUsername.php',  {
-        method: 'POST',
-        body: formData
-    }).then((response)=>{
+    let myUsername;
+    await fetch('/getUsername').then((response) => {
         return response.json();
     }).then((json) => {
-        if(json){
-            const modifyDiv = document.createElement('a');
-            modifyDiv.classList.add("modify");
-            modifyDiv.textContent = "Delete";
-            modifyDiv.addEventListener('click', deleteComment);
-            contentDiv.appendChild(modifyDiv);
-        }
+        myUsername = json;
     });
-    if(element['id'] !== 'undefined'){
-        commentDiv.dataset.id=element['id'];   
-    }
-    main.append(commentDiv);
 
+    if(myUsername == userDiv.textContent){
+        const modifyDiv = document.createElement('a');
+        modifyDiv.classList.add("modify");
+        modifyDiv.textContent = "Delete";
+        modifyDiv.addEventListener('click', deleteComment);
+        contentDiv.appendChild(modifyDiv);
+    }
+    
+    main.append(commentDiv);
+    
 }
 
 function loadComment(){
-    fetch('script_php/getPostComment.php?id='+postId).then((response) => {
+    fetch('/getPostComment/'+postId).then((response) => {
         return response.json();
     }).then((json) => {
-        if(json !== 0){
-            console.log(json);
-            const main = document.querySelector("#main");
-            json.forEach(element => {
-                postComment(main, element);
-            });   
-        }
+        console.log(json)
+        const main = document.querySelector("#main");
+        json.forEach(element => {
+            console.log(element);
+            postComment(main, element);
+        });   
     });
 }
 
 
-const endpoint = 'script_php/getPostInfo.php?id=';
-const request = postId;
-const url = endpoint + request;
+const endpoint = '/getPostInfo/';
+const url = endpoint + postId;
 let data;
 
 fetch(url).then((response) =>{
     return response.json();
 }).then((json)=>{
+    console.log(json)
     data = json;
     if(data === 0){
         document.querySelector('.errore').classList.remove('hidden');
@@ -147,35 +152,18 @@ fetch(url).then((response) =>{
         postDiv.appendChild(subredditDiv);
         postDiv.appendChild(titleDiv);
         postDiv.appendChild(descrDiv);
-        postDiv.appendChild(imgDiv);
+        if(img){
+            postDiv.appendChild(imgDiv);
+        }
         main.appendChild(postDiv);
     }
 }).then(loadComment);
 
-// async function commentClick(){
-//     let isLogged;
-//     await fetch('script_php/checkIfLogged.php').then((response) => {
-//         return response.json();
-//     }).then((json) => {
-//         isLogged = json;
-//     })
-//     if(!isLogged){
-//         loginClick();
-//         return;
-//     }
-// }
-
 async function commentClick(){
-    let isLogged;
+    const log = await isLogged();
 
-    await fetch("script_php/checkIfLogged.php").then((response)=>{
-        return response.json();
-    }).then((json) =>{
-        isLogged=json;
-    });
-
-    if(!isLogged){
-        document.querySelector('#commentError').classList.remove('hidden');
+    if(!log){
+        loginClick();
     }else{    
         if(document.querySelector('#formComment').classList.contains('hidden')){
             document.querySelector('#formComment').classList.remove('hidden');
@@ -192,32 +180,47 @@ const formComment = document.forms['formComment'];
 
 async function comment(e){
     e.preventDefault();
-    let isLogged;
     document.querySelector('#commentError').classList.add('hidden');
-    await fetch("script_php/checkIfLogged.php").then((response)=>{
-        return response.json();
-    }).then((json) =>{
-        isLogged=json;
-    });
+    
+    const log = await isLogged();
 
-    if(isLogged){
+    if(log){
 
         const content = formComment.content.value;
         formData = new FormData();
         formData.append('content', content);
         formData.append('postId', postId);
-        await fetch("script_php/submitComment.php",{
+        const token_csrf = await get_token_csrf();
+        const response = await fetch("/commentPost",{
             method: "POST",
-            body: formData
+            body: formData,
+            headers: {
+              'X-CSRF-TOKEN': token_csrf
+            }
         });
+
+        let comment_id;
+
+        await response.json().then((json) => {
+            comment_id = json;
+        })
+
+        let myUsername;
+        await fetch('/getUsername').then((response) => {
+            return response.json();
+        }).then((json) => {
+            myUsername = json;
+        });
+        
         formComment.content.value = '';
         console.log("Commented");
 
         const date = new Date();
         const element = {
             post_date: date,
-            username: 'Me',
-            content: content
+            username: myUsername,
+            content: content,
+            id : comment_id
 
         }
         postComment(document.querySelector('#post'), element);

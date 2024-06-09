@@ -18,7 +18,7 @@ Route::get('/comment/{id}', function($id){
 
 Route::get('/about/{id}', function($id){
     return view('about')
-        ->with("post_id", $id);
+        ->with("subreddit", $id);
 });
 /* === FINE PAGINE DISPONIBILI=== */
 
@@ -37,6 +37,8 @@ Route::post('/login', 'App\Http\Controllers\LoginController@login');
 Route::post('/signup', 'App\Http\Controllers\LoginController@signup');
 Route::get('/logout', 'App\Http\Controllers\LoginController@logout');
 Route::get('/isLogged', 'App\Http\Controllers\LoginController@isLogged');
+Route::get('/getUsername/{id}', 'App\Http\Controllers\LoginController@getUsername');
+Route::get('/getUsername', 'App\Http\Controllers\LoginController@getUsernameSession');
 /* === FINE LOGIN CONTROLLER === */
 
 /* === REDDIT CONTROLLER === */
@@ -46,6 +48,16 @@ Route::get('/getPost/{request}/{limit?}', 'App\Http\Controllers\RedditHttpContro
 /* === FINE REDDIT CONTROLLER === */
 
 /* === POST CONTROLLER === */
-Route::post('/savePost', 'App\Http\Controllers\PostController@savePost');
-Route::get('/savePost/{id}/{title}/{icon}/{name}/{descr}/{img}', 'App\Http\Controllers\PostController@savePost');
+Route::post('/savePost', 'App\Http\Controllers\PostController@savePost');       /* Inserisce il post nel DB */
+Route::get('/savePostUser/{id}', 'App\Http\Controllers\PostController@savePostUser');   /* Salva il post nel DB saved con la relazione con User */
+Route::get('/removePostUser/{id}', 'App\Http\Controllers\PostController@removePostUser');   /* Elimimna il post nel DB saved con la relazione con User */
+Route::get('/getPostInfo/{id}', 'App\Http\Controllers\PostController@getPost');
+Route::get('/getPostComment/{id}', 'App\Http\Controllers\PostController@getPostComment');
+Route::post('/commentPost', 'App\Http\Controllers\PostController@commentPost');
+Route::get('/isSaved/{id}', 'App\Http\Controllers\PostController@isSaved');
+Route::get('loadSaved', 'App\Http\Controllers\PostController@loadSaved');
 /* === FINE POST CONTROLLER === */
+
+/* === COMMENT CONTROLLER === */
+Route::get('/deleteComment/{id}', 'App\Http\Controllers\CommentController@deleteComment');
+/* === FINE COMMENT CONTROLLER === */

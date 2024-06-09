@@ -71,7 +71,8 @@ async function loadPosts(value){
         posts.push(post);
 
     }
-    return posts;
+    
+    return {posts, num};
     
 }
 

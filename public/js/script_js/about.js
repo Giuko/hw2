@@ -1,6 +1,8 @@
-const endpoint = 'script_php/fetchNoOauth.php?request=';
-const request = '/'+document.querySelector('#subredditInfo').dataset.info + '/about.json';
+const endpoint = '/subredditRequest/';
+const request = document.querySelector('#subredditInfo').dataset.info;
 const url = endpoint + request;
+
+console.log(url);
 
 // La funzione serve per ottenere le informazioni riguardo i subreddit e successivamente popolare la pagina web
 function getInfo(){

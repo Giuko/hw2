@@ -51,25 +51,6 @@ class RedditHttpController extends BaseController
     }
     
     public function headLoad(){
-        // $client_id = env('CLIENT_ID');
-        // $client_secret = env('CLIENT_SECRET');
-        // $username = env('USERNAME');
-        // $password = env('PASSWORD');
-        
-        // // Creazione dell'header per l'autenticazione di base
-        // $basicAuthHeader = base64_encode("$client_id:$client_secret");
-        
-        // // Richiesta del token di accesso
-        // $response = Http::withHeaders([
-        //     'Authorization' => "Basic $basicAuthHeader",
-        //     'User-Agent' => 'My_University_script 1.0 (by /u/GiukoMG)'
-        // ])->asForm()->post('https://www.reddit.com/api/v1/access_token', [
-        //     'grant_type' => 'password',
-        //     'username' => $username,
-        //     'password' => $password,
-        // ]);
-        // $token = $response->json()['access_token'];
-        // $token = $this->getAccessToken();
         $token = $this->getAccessToken();
         
         // Utilizzo del token per ottenere i dati
