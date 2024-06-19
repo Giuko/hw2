@@ -4,7 +4,6 @@ const url = endpoint + request;
 
 console.log(url);
 
-// La funzione serve per ottenere le informazioni riguardo i subreddit e successivamente popolare la pagina web
 function getInfo(){
     fetch(url).then(onResponse, onFailure).then((json) => {
         const title = json.data.title;

@@ -17,7 +17,6 @@ async function loadPosts(value){
     const posts = [];
     const query = `/search.json?q=${value}&limit=10`
     console.log(query);
-    // const url = 'script_php/fetchNoOauth.php?request=' + query;
     const url = `/getPost/${value}`;
     json = await fetch(url).then(onResponse, onFailure);
     console.log('loadPost: '+ JSON.stringify(json));
@@ -29,16 +28,12 @@ async function loadPosts(value){
         const id = info.id;
         const title = info.title;
         let content = info.selftext;
-        // if(content.length > 403){
-        //     content = content.substring(0, 400) + "...";
-        // }
         let thumb = info.thumbnail;
         thumb = getImg(thumb);
         
         const subreddit = info.subreddit;
     
         const subreddit_request = `/${subreddit}/about.json`;
-        // const subreddit_url = 'script_php/fetchNoOauth.php?request='+subreddit_request; 
         const subreddit_url = `/subredditRequest/${subreddit}`;
         let ico = '';
         const jsonSubreddit = await fetch(subreddit_url).then(onResponse, onFailure)

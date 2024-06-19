@@ -78,7 +78,6 @@ class LoginController extends BaseController
     }
 
     public function logout(){
-        // Elimina dati di sessione
         Session::flush();
     }
 

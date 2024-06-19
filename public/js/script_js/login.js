@@ -211,7 +211,6 @@ async function validazioneSignup(e){
 }
 
 function signUp(e){
-    //Altrimenti viene effettuato il submit del loginForm
     e.preventDefault();
     const loginWindow = document.querySelector('#loginDiv');
     const signupWindow = document.querySelector('#signupDiv');

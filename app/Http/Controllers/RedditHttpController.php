@@ -29,7 +29,6 @@ class RedditHttpController extends BaseController
         $username = env('USERNAME');
         $password = env('PASSWORD');
         
-        // Creazione dell'header per l'autenticazione di base
         $basicAuthHeader = base64_encode("$client_id:$client_secret");
         
         // Richiesta del token di accesso

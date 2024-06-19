@@ -39,12 +39,10 @@ async function postComment(main, element){
     }else{
         dateString = element['post_date'];
     }
-    // Creare un oggetto Date
     const date = new Date(dateString);
 
-    // Estrarre il giorno, mese e anno
     const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // I mesi vanno da 0 a 11, quindi aggiungiamo 1
+    const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
 
     // Formattare la data come dd/mm/yyyy
@@ -59,7 +57,6 @@ async function postComment(main, element){
     commentDiv.appendChild(containerDiv);
     commentDiv.dataset.id=element['id'];
 
-    // Solo se utente che ha postato e utente loggato sono uguali
     let myUsername;
     await fetch('/getUsername').then((response) => {
         return response.json();
