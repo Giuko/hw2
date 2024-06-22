@@ -128,13 +128,13 @@ class PostController extends BaseController
 
     public function isSaved($id){
         if(!Session::get('user_id')){
-            return;
+            return response()->json(0);
         }
         
         $post = Post::where('postid', $id)
                 ->first();
         if(!$post){
-            return;
+            return response()->json(0);
         }
         $user_id = Session::get('user_id');
         $post_id = $post->id;

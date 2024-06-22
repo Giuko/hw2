@@ -48,7 +48,8 @@ function isSaved(id){
     return -1;
 }
 
-function enterStar(e){
+async function enterStar(e){
+
     let star = e.target;
     let clicked = star.dataset.click;
     if(clicked === "0"){
@@ -70,7 +71,9 @@ async function clickStar(e){
 
     e.preventDefault();
 
-    if(!isLogged()){
+    const log = await isLogged();
+    console.log(log);
+    if(!log){
         loginClick();
         return;
     }
